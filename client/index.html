@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Online Trivia Game</title>
+    <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
+  </head>
+
+  <body>
+    <div class="ui segment" id="trivia-game">
+      <h2 class="ui header right aligned grid">Hello<span></span></h2>
+    </div>
+    <div id= "trivia-login">
+      <div class="ui middle aligned page grid">
+        <div class="four center aligned wide column">
+          <h1 class="ui header">Login to Trivia</h1>
+          <form class="ui form">
+            <div class="ui field">
+              <input id="username" type="text" placeholder="User">
+            </div>
+            <button  id="login" class="big ui button">
+              Join Game
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="ui three column grid">
+      <div class="two wide column">
+          <div id= "trivia-menu" class="two wide middle aligned content column">
+            <div class="ui vertical secondary labeled icon menu" id="menu">
+              <a class="active item" id="play">
+                <i class="gamepad icon"></i>
+                  Play
+              </a>
+              <a class="item" id="ask">
+                <i class="write icon"></i>
+                  Create
+              </a>
+              <a class="item" id="score">
+                <i class="star icon"></i>
+                  Score
+              </a>
+            </div>
+          </div>
+      </div>
+      <div class="twelve wide stretched column">
+        <div class="active item" id="play">
+          <div class="field">
+            <label>Question: </label>
+            <div id="question">
+              <span></span>
+            </div>
+            <div class="field">
+              <input type="text" id="answer" placeholder="Enter your Answer">
+            </div>
+            <button class="ui teal button" id="getAnswerButton">
+              Submit
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>  
+
+    <div id="players" class="three wide left aligned column">
+      <div class="ui celled list" id="users">
+        Currently Online <br >
+      </div>
+    </div>
+
+    <div id="trivia-score" class="three wide left aligned column">
+      <div class="ui statistic" id="right">
+        <div class="value" id="correct-score">
+
+        </div>
+      </div>
+      <div class="ui statistic" id="wrong">
+        <div class="value" id="wrong-score">
+
+        </div>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+    <script src="semantic/dist/semantic.min.js"></script>
+    <script src="javascripts/app.js"></script>
+  </body>
+</html>
