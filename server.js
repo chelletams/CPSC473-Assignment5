@@ -13,11 +13,20 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
 var redisClient = redis.createClient();
+redisClient.on("connect", function() {
+	"use strict";
+	console.log("Connected to redis");
+});
 redisClient.set("right", 0);
 redisClient.set("wrong", 0);
 
 // connect to the data store in mongo
 mongoose.connect("mongodb://localhost/trivia");
+var db = mongoose.connection;
+db.on("open", function () {
+	"use strict";
+	console.log("Connected to mongoDB");
+});
 
 var triviaSchema = mongoose.Schema( {
 	"question" : String,
@@ -43,14 +52,6 @@ io.sockets.on("connection", function(socket) {
 		users.push(socket.username);
 		console.dir(socket.username);
 		io.sockets.emit("get users", users);
-	});
-
-	socket.on("get question", function() {
-		var random = Math.floor((Math.random() * answerId) + 1);
-	});
-
-	socket.on("answer", function(data) {
-
 	});
 
 	socket.on("score", function () {
@@ -139,7 +140,7 @@ app.post("/answer", function (req, res) {
 	});
 });
 
-/*app.get("/score", function(req, res) {
+app.get("/score", function(req, res) {
 	var right,
 		wrong;
 
@@ -153,6 +154,6 @@ app.post("/answer", function (req, res) {
 		}
 		return res.json({right: right, wrong: wrong});
 	});
-});*/
+});
 
 console.log("Server listening on port 3000");
