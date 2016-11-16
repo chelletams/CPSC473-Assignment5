@@ -1,53 +1,71 @@
-var socket = io.connect("http://localhost:3000");
-
-var updateScore = function (socket) {
-	"use strict";
-
-	socket.on("updateScore", function(data) {
-		$("#correct-score").remove();
-		$("#wrong-score").remove();
-		$("#right").prepend('<div class="value" id="correct-score">' + data.right + '</div>');
-		$("#wrong").prepend('<div class="value" id="wrong-score">' + data.wrong + '</div>');
-		//$("#correct-score").transition("jiggle");
-		//$("#wrong-score").transition("jiggle");
-	});
-};
-
-var updatePlayers = function (socket) {
-	"use strict";
-
-	socket.on("get users", function(data) {
-		data.forEach(function(data) {
-			$("#users").append(data.username);
-		});
-	});
-};
-
 var main = function (triviaObjects) {
 	"use strict";
 
-	var answerId = 1;
+	var socket = io.connect("http://localhost:3000"),
+		answerId = 1,
+		userList = [];
+
+	var updateScore = function (socket) {
+		socket.on("updateScore", function(data) {
+			$("#correct-score").remove();
+			$("#wrong-score").remove();
+			$("#right").prepend('<div class="value" id="correct-score">' + data.right + '</div>');
+			$("#wrong").prepend('<div class="value" id="wrong-score">' + data.wrong + '</div>');
+		});
+	};
+
+	var updatePlayers = function (socket) {
+		socket.on("get users", function(data) {
+			userList = data;
+			for (var i = 0; i < userList.length; i++) {
+				if(userList[i].username != null) {
+					$("#users").append(userList[i].username);
+				}
+			}
+		});
+	};
+
+	$("#game").hide();
+	$("#question").hide();
+	$("#score").hide();
 
 	$("#login").on("click", function(event) {
 		event.preventDefault();
 		var username = $("#username").val();
-		if(username != "")
-		{
-			$("#trivia-login").fadeOut();
-			$("#trivia-menu").show();
-			$("#users").show();
-			$("#trivia-score").show();
-			$("#trivia-game h2 span").html(username);
-			socket.emit("new user", {username: username});
-			socket.emit("score");
+		var existingUser = false;
+
+		for(var i = 0; i < userList.length; i++) {
+			if (userList[i].username == username) {
+				$("#existing-user").text("Sorry, that username is not available.");
+				existingUser = true;
+			}
 		}
+
+		if(!existingUser)
+		{
+			$("#users").show();
+			$("#trivia-game h2 span").html("Welcome " + username);
+			socket.emit("new user", {username: username});
+		}
+		$("#username").val("");
+	});
+
+	$("#game-tab").on("click", function(event) {
+		event.preventDefault();
+		$("#trivia-header").hide();
+		$("#game").show();
+	});
+
+	$("#question-tab").on("click", function(event) {
+		event.preventDefault();
+		$("#question").show();
 	});
 
 	var getQuestion = function() {
 		$.get("/questions", function(data) {
 			console.log(data);
 			if(data) {
-				$("#question").html(data.question);
+				$("#question-retrieved").html(data.question);
 				answerId = data.answerId;
 			}
 			else {
@@ -137,7 +155,7 @@ var main = function (triviaObjects) {
 		getScore();
 	});
 
-	updateScore(socket);
+	//updateScore(socket);
 	updatePlayers(socket);
 };
 
